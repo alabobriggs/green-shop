@@ -2,7 +2,7 @@ const bodyParser = require('body-parser')
 const express = require('express')
 const path = require('path')
 
-const adminRoutes = require('./routes/admin')
+const adminData = require('./routes/admin')
 const shopRoutes = require('./routes/shop')
 
 const app = express()
@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({
 }))
 
 // app.use('/admin',adminRoutes)
-app.use('/admin',adminRoutes)
+app.use('/admin',adminData.routes)
 
 app.use(shopRoutes)
 
