@@ -9,6 +9,7 @@ const app = express()
 
 // enable template engine
 app.set('view engine', 'pug')
+app.set('views', 'views')
 
 // this is used to serve static files to the server
 app.use(express.static(path.join(__dirname, 'public')))
