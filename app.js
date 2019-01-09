@@ -1,33 +1,24 @@
-const bodyParser = require('body-parser')
-const express = require('express')
-const path = require('path')
-const adminRoutes = require('./routes/admin')
-const shopRoutes = require('./routes/shop')
-const errorController = require('./controllers/error')
+const path = require('path');
 
-const app = express()
+const express = require('express');
+const bodyParser = require('body-parser');
 
-// enable template engine
-app.set('view engine', 'ejs')
-app.set('views', 'views')
+const errorController = require('./controllers/error');
 
-// this is used to serve static files to the server
-app.use(express.static(path.join(__dirname, 'public')))
+const app = express();
 
+app.set('view engine', 'ejs');
+app.set('views', 'views');
 
-// enable body parser
-app.use(bodyParser.urlencoded({
-    extended: false
-}))
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
 
-// routes
-app.use('/admin', adminRoutes)
-app.use(shopRoutes)
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/admin', adminRoutes);
+app.use(shopRoutes);
 
-// handle 404 errors
-app.use(errorController.get404)
+app.use(errorController.get404);
 
-app.listen(3000, ()=> {
-    console.log('server started at port 3000')
-})
+app.listen(3000);
