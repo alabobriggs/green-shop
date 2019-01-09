@@ -7,12 +7,15 @@ const shopRoutes = require('./routes/shop')
 
 const app = express()
 
+// this is used to serve static files to the server
+app.use(express.static(path.join(__dirname, 'public')))
+
 app.use(bodyParser.urlencoded({
     extended: false
 }))
 
 // app.use('/admin',adminRoutes)
-app.use(adminRoutes)
+app.use('/admin',adminRoutes)
 
 app.use(shopRoutes)
 
