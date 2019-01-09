@@ -1,8 +1,9 @@
 const bodyParser = require('body-parser')
 const express = require('express')
 const path = require('path')
-const adminData = require('./routes/admin')
+const adminRoutes = require('./routes/admin')
 const shopRoutes = require('./routes/shop')
+const errorController = require('./controllers/error')
 
 const app = express()
 
@@ -20,16 +21,12 @@ app.use(bodyParser.urlencoded({
 }))
 
 // routes
-app.use('/admin',adminData.routes)
+app.use('/admin', adminRoutes)
 app.use(shopRoutes)
 
 
 // handle 404 errors
-app.use((req,res,next) => {
-    res.render('404', {
-        pageTitle: 'Page not found'
-    })
-})
+app.use(errorController.get404)
 
 app.listen(3000, ()=> {
     console.log('server started at port 3000')
