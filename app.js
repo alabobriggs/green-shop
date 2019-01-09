@@ -1,14 +1,21 @@
 const bodyParser = require('body-parser')
 const express = require('express')
 const path = require('path')
-
+const expressHbs = require('express-handlebars')
 const adminData = require('./routes/admin')
 const shopRoutes = require('./routes/shop')
 
 const app = express()
 
+// register an unregistered engine
+app.engine('hbs', expressHbs({
+    layoutsDir: 'views/layouts/',
+    defaultLayout: 'main-layout',
+    extname: 'hbs'
+}))
+
 // enable template engine
-app.set('view engine', 'pug')
+app.set('view engine', 'hbs')
 app.set('views', 'views')
 
 // this is used to serve static files to the server
