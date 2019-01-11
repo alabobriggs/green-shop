@@ -5,6 +5,9 @@ const bodyParser = require('body-parser');
 
 const errorController = require('./controllers/error');
 
+// database
+const db = require('./util/database')
+
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -21,4 +24,6 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-app.listen(3000);
+app.listen(3000, ()=> {
+    console.log('server started at port 3000')
+});
