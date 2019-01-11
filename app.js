@@ -2,7 +2,7 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
-
+const mongodb = require('mongodb')
 const errorController = require('./controllers/error');
 const sequelize = require('./util/database');
 const Product = require('./models/product');
@@ -37,6 +37,7 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
+<<<<<<< HEAD
 Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
 User.hasMany(Product);
 User.hasOne(Cart);
@@ -70,3 +71,8 @@ sequelize
   .catch(err => {
     console.log(err);
   });
+=======
+app.listen(3000, ()=> {
+  console.log('server started at port 3000')
+});
+>>>>>>> updated-master
