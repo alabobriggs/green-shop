@@ -2,7 +2,7 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
-
+const mongodb = require('mongodb')
 const errorController = require('./controllers/error');
 
 const app = express();
@@ -21,4 +21,6 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-app.listen(3000);
+app.listen(3000, ()=> {
+  console.log('server started at port 3000')
+});
