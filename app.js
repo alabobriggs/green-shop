@@ -2,8 +2,9 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const mongodb = require('mongodb')
+
 const errorController = require('./controllers/error');
+<<<<<<< HEAD
 const sequelize = require('./util/database');
 const Product = require('./models/product');
 const User = require('./models/user');
@@ -11,6 +12,10 @@ const Cart = require('./models/cart');
 const CartItem = require('./models/cart-item');
 const Order = require('./models/order');
 const OrderItem = require('./models/order-item');
+=======
+const mongoConnect = require('./util/database').mongoConnect;
+const User = require('./models/user')
+>>>>>>> project-mongodb-databse
 
 const app = express();
 
@@ -24,9 +29,19 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
+<<<<<<< HEAD
   User.findById(1)
     .then(user => {
       req.user = user;
+=======
+  User.findById("5c3c4c664174c2d20313645c")
+    .then(user => {
+      req.user = new User(
+                    user.name, 
+                    user.email, 
+                    user.cart, 
+                    user._id);
+>>>>>>> project-mongodb-databse
       next();
     })
     .catch(err => console.log(err));
@@ -37,6 +52,7 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
 User.hasMany(Product);
@@ -76,3 +92,8 @@ app.listen(3000, ()=> {
   console.log('server started at port 3000')
 });
 >>>>>>> updated-master
+=======
+mongoConnect(() => {
+  app.listen(3000, ()=> console.log('server started at port 3000'));
+}); 
+>>>>>>> project-mongodb-databse

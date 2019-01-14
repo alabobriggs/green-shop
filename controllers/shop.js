@@ -1,7 +1,11 @@
 const Product = require('../models/product');
 
 exports.getProducts = (req, res, next) => {
+<<<<<<< HEAD
   Product.findAll()
+=======
+  Product.fetchAll()
+>>>>>>> project-mongodb-databse
     .then(products => {
       res.render('shop/product-list', {
         prods: products,
@@ -16,6 +20,7 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
+<<<<<<< HEAD
   // Product.findAll({ where: { id: prodId } })
   //   .then(products => {
   //     res.render('shop/product-detail', {
@@ -25,6 +30,9 @@ exports.getProduct = (req, res, next) => {
   //     });
   //   })
   //   .catch(err => console.log(err));
+=======
+  
+>>>>>>> project-mongodb-databse
   Product.findById(prodId)
     .then(product => {
       res.render('shop/product-detail', {
@@ -37,7 +45,11 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
+<<<<<<< HEAD
   Product.findAll()
+=======
+  Product.fetchAll()
+>>>>>>> project-mongodb-databse
     .then(products => {
       res.render('shop/index', {
         prods: products,
@@ -53,6 +65,7 @@ exports.getIndex = (req, res, next) => {
 exports.getCart = (req, res, next) => {
   req.user
     .getCart()
+<<<<<<< HEAD
     .then(cart => {
       return cart
         .getProducts()
@@ -64,12 +77,21 @@ exports.getCart = (req, res, next) => {
           });
         })
         .catch(err => console.log(err));
+=======
+    .then(products => {
+      res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        products: products
+      })
+>>>>>>> project-mongodb-databse
     })
     .catch(err => console.log(err));
 };
 
 exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
+<<<<<<< HEAD
   let fetchedCart;
   let newQuantity = 1;
   req.user
@@ -100,11 +122,26 @@ exports.postCart = (req, res, next) => {
       res.redirect('/cart');
     })
     .catch(err => console.log(err));
+=======
+  Product.findById(prodId)
+        .then(product => {
+            return req.user.addToCart(product)
+          })
+        .then(result => {
+            console.log(result)
+            res.redirect('/cart');
+        })
+        .catch(err => {
+          console.log(err)
+        })
+  
+>>>>>>> project-mongodb-databse
 };
 
 exports.postCartDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
   req.user
+<<<<<<< HEAD
     .getCart()
     .then(cart => {
       return cart.getProducts({ where: { id: prodId } });
@@ -113,6 +150,9 @@ exports.postCartDeleteProduct = (req, res, next) => {
       const product = products[0];
       return product.cartItem.destroy();
     })
+=======
+    .deleteItemFromCart(prodId)
+>>>>>>> project-mongodb-databse
     .then(result => {
       res.redirect('/cart');
     })
@@ -122,6 +162,7 @@ exports.postCartDeleteProduct = (req, res, next) => {
 exports.postOrder = (req, res, next) => {
   let fetchedCart;
   req.user
+<<<<<<< HEAD
     .getCart()
     .then(cart => {
       fetchedCart = cart;
@@ -143,6 +184,9 @@ exports.postOrder = (req, res, next) => {
     .then(result => {
       return fetchedCart.setProducts(null);
     })
+=======
+    .addOrder()
+>>>>>>> project-mongodb-databse
     .then(result => {
       res.redirect('/orders');
     })
@@ -151,7 +195,11 @@ exports.postOrder = (req, res, next) => {
 
 exports.getOrders = (req, res, next) => {
   req.user
+<<<<<<< HEAD
     .getOrders({include: ['products']})
+=======
+    .getOrders()
+>>>>>>> project-mongodb-databse
     .then(orders => {
       res.render('shop/orders', {
         path: '/orders',
