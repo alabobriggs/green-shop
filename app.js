@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose')
 
 const errorController = require('./controllers/error');
-// const User = require('./models/user')
+const User = require('./models/user')
 
 const app = express();
 
@@ -17,18 +17,14 @@ const shopRoutes = require('./routes/shop');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// app.use((req, res, next) => {
-//   User.findById("5c3c4c664174c2d20313645c")
-//     .then(user => {
-//       req.user = new User(
-//                     user.name, 
-//                     user.email, 
-//                     user.cart, 
-//                     user._id);
-//       next();
-//     })
-//     .catch(err => console.log(err));
-// });
+app.use((req, res, next) => {
+  User.findById("5c3dae943b8b220aecd18018 ")
+    .then(user => {
+      req.user = user
+      next();
+    })
+    .catch(err => console.log(err));
+});
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
@@ -39,7 +35,21 @@ mongoose
   .connect("mongodb://localhost:27017/nodecomplete", {
     useNewUrlParser: true
   })
-  .then(res => {
-    app.listen(3000, () => console.log('server started at port 3000'));
+  .then(() => {
+    User
+      .findOne()
+      .then(user => {
+        if(!user){
+          const user = new User({
+            name: 'Alabo',
+            email: 'alabo@test.com',
+            cart: {
+              items: []
+            }
+          })
+          user.save()
+        }
+      })
+   app.listen(3000, () => console.log('server started at port 3000')); 
   })
-  .catch(err => console.log('err'))
+  .catch(err => console.log(err))
