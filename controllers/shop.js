@@ -45,8 +45,10 @@ exports.getIndex = (req, res, next) => {
 
 exports.getCart = (req, res, next) => {
   req.user
-    .getCart()
-    .then(products => {
+    .populate('cart.items.productId') // .then() won't work because it doesn't return a promise
+    .execPopulate() // execPopulate returns a promise
+    .then(user => {
+      products = user.cart.items
       res.render('shop/cart', {
         path: '/cart',
         pageTitle: 'Your Cart',
@@ -63,7 +65,6 @@ exports.postCart = (req, res, next) => {
             return req.user.addToCart(product)
           })
         .then(result => {
-            console.log(result)
             res.redirect('/cart');
         })
         .catch(err => {
