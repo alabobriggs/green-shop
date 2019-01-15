@@ -19,6 +19,7 @@ exports.postAddProduct = (req, res, next) => {
     price : price,
     description : description,
     imageUrl : imageUrl, 
+    userId: req.user
   });
   
   product
@@ -79,7 +80,10 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
   Product.find()
+    // .select('title price -_id') used to control which fields are returned
+    // .populate('userId', 'name email -cart') second argument pupulates which fields are needed
     .then(products => {
+      console.log(products)
       res.render('admin/products', {
         prods: products,
         pageTitle: 'Admin Products',
