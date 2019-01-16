@@ -27,8 +27,6 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-
-
 // setup body-parser
 app.use(bodyParser.urlencoded({
   extended: false
@@ -76,21 +74,6 @@ mongoose
     useNewUrlParser: true
   })
   .then(() => {
-    // create dummy USER
-    User
-      .findOne()
-      .then(user => {
-        if (!user) {
-          const user = new User({
-            name: 'Alabo',
-            email: 'alabo@test.com',
-            cart: {
-              items: []
-            }
-          })
-          user.save()
-        }
-      })
     app.listen(3000, () => console.log('server started at port 3000'));
   })
   .catch(err => console.log(err))
