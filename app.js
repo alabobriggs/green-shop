@@ -43,7 +43,7 @@ const store = new MongoDBStore({
   collection: 'sessions'
 });
 
-// sessions
+// initialize session store
 app.use(session({
   secret: 'my secret key',
   resave: false, // stop session from changing on every response
@@ -52,6 +52,17 @@ app.use(session({
 }))
 
 // save user to request
+app.use((req, res, next) => {
+  if(!req.session.user) {
+    return next() // return next so the code after will not be executed
+  }
+  User.findById(req.session.user._id)
+    .then(user => {
+      req.user = user
+      next()
+    })
+    .catch(err => console.log(err));
+})
 
 // ROUTES===========================================================
 app.use('/admin', adminRoutes);
