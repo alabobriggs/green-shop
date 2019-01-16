@@ -4,11 +4,18 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session')
+const mongoDbStore = require('connect-mongodb-session')(session)
 
 const errorController = require('./controllers/error');
 const User = require('./models/user');
 
+const MONGODB_URl = "mongodb://localhost:27017/nodecomplete"
+
 const app = express();
+const store = new mongoDbStore({
+  url: MONGODB_URl,
+  collection: 'sessions'
+})
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -27,6 +34,7 @@ app.use(session({
   secret : 'my secret key',
   resave: false, // stop session from changing on every response
   saveUninitialized: false, // stop session from saving on every request if nothing changes
+  store: store
 }))
 
 app.use((req, res, next) => {
@@ -45,7 +53,7 @@ app.use(authRoutes);
 app.use(errorController.get404);
 
 mongoose
-  .connect("mongodb://localhost:27017/nodecomplete", {
+  .connect(MONGODB_URl, {
     useNewUrlParser: true
   })
   .then(() => {
