@@ -5,7 +5,8 @@ exports.getLogin = (req, res, next) => {
   res.render('auth/login', {
     path: '/login',
     pageTitle: 'Login',
-    isAuthenticated: false
+    isAuthenticated: false,
+    name: req.session.isLoggedIn ? req.session.user.name : null
   });
 };
 
@@ -13,19 +14,36 @@ exports.getSignup = (req, res, next) => {
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
-    isAuthenticated: false
+    isAuthenticated: false,
+    name: req.session.isLoggedIn ? req.session.user.name : null
   });
 };
 
 exports.postLogin = (req, res, next) => {
-  User.findById('5bab316ce0a7c75f783cb8a8')
+  const email = req.body.email
+  const password = req.body.password
+
+  User.findOne({email: email})
     .then(user => {
-      req.session.isLoggedIn = true;
-      req.session.user = user;
-      req.session.save(err => {
-        console.log(err);
-        res.redirect('/');
-      });
+      if(!user){
+        return res.redirect('/login')
+      }
+      bcrypt.compare(password, user.password)
+        .then(doMatch => {
+          if(doMatch){
+            req.session.isLoggedIn = true;
+            req.session.user = user;
+            return req.session.save(err => {
+              console.log(err);
+              res.redirect('/');
+            });
+          }
+          res.redirect('/login')
+        })
+        .catch(err => {
+          console.log(err)
+          res.redirect('/login')
+        })
     })
     .catch(err => console.log(err));
 };
