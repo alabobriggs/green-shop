@@ -3,6 +3,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const session = require('express-session')
 
 const errorController = require('./controllers/error');
 const User = require('./models/user');
@@ -16,8 +17,17 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+   extended: false 
+  }));
+
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(session({
+  secret : 'my secret key',
+  resave: false, // stop session from changing on every response
+  saveUninitialized: false, // stop session from saving on every request if nothing changes
+}))
 
 app.use((req, res, next) => {
   User.findById('5c3dae943b8b220aecd18018')
