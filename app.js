@@ -28,11 +28,6 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 
-// set up session store
-const store = new MongoDBStore({
-  uri: MONGODB_URI,
-  collection: 'sessions'
-});
 
 // setup body-parser
 app.use(bodyParser.urlencoded({
@@ -41,6 +36,12 @@ app.use(bodyParser.urlencoded({
 
 // static files
 app.use(express.static(path.join(__dirname, 'public')));
+
+// set up session store
+const store = new MongoDBStore({
+  uri: MONGODB_URI,
+  collection: 'sessions'
+});
 
 // sessions
 app.use(session({
@@ -51,14 +52,6 @@ app.use(session({
 }))
 
 // save user to request
-app.use((req, res, next) => {
-  User.findById('5c3dae943b8b220aecd18018')
-    .then(user => {
-      req.user = user;
-      next();
-    })
-    .catch(err => console.log(err));
-});
 
 // ROUTES===========================================================
 app.use('/admin', adminRoutes);
