@@ -6,7 +6,8 @@ exports.getAddProduct = (req, res, next) => {
         path: '/admin/add-product',
         formCSS: true,
         productCSS: true,
-        activeAddProduct: true
+        activeAddProduct: true,
+        isAuthenticated: req.isLoggedIn
     })
 }
 
@@ -25,6 +26,7 @@ exports.getProducts = (req, res, next) => {
             hasProducts: products.length > 0,
             activeShop: true,
             productCSS: true,
+            isAuthenticated: req.isLoggedIn
             // layout:false
         })
     })
