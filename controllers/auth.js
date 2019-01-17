@@ -45,15 +45,15 @@ exports.postLogin = (req, res, next) => {
     .then(user => {
       if(!user){
         req.flash('error', 'Email does not exist')
-        req.session.isLoggedIn = true;
         return res.redirect('/login')
       }
       bcrypt.compare(password, user.password)
-        .then(doMatch => {
-          if(doMatch){
-            req.session.user = user;
-            return req.session.save(err => {
-              if(err){
+      .then(doMatch => {
+        if(doMatch){
+          req.session.user = user;
+          req.session.isLoggedIn = true;
+          return req.session.save(err => {
+            if(err){
                 console.log(err)
               }
               res.redirect('/');
@@ -91,7 +91,7 @@ exports.postSignup = (req, res, next) => {
           })
           return user.save()
         })
-        .then((result) => {
+        .then(() => {
           res.redirect('/login')
           return transporter.sendMail({
             to: email,
