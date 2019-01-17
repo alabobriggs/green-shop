@@ -92,7 +92,6 @@ exports.postSignup = (req, res, next) => {
           return user.save()
         })
         .then((result) => {
-          console.log(result)
           res.redirect('/login')
           return transporter.sendMail({
             to: email,
