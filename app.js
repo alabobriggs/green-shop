@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
-
+const csrf = require('csurf')
 
 // import FILE MODULES===========================================
 const errorController = require('./controllers/error');
@@ -41,6 +41,9 @@ const store = new MongoDBStore({
   collection: 'sessions'
 });
 
+// set up csrf protection
+const csrfProtection = csrf()
+
 // initialize session store
 app.use(session({
   secret: 'my secret key',
@@ -48,6 +51,9 @@ app.use(session({
   saveUninitialized: false, // stop session from saving on every request if nothing changes
   store: store
 }))
+
+// initialize csrfProtectio  it most come after the session
+app.use(csrfProtection)
 
 // save user to request
 app.use((req, res, next) => {
@@ -60,6 +66,15 @@ app.use((req, res, next) => {
       next()
     })
     .catch(err => console.log(err));
+})
+
+
+// pass global information to pages
+app.use((req, res, next)=> {
+  res.locals.isAuthenticated = req.session.isLoggedIn
+  res.locals.csrfToken = req.csrfToken()
+  res.locals.name = req.session.isLoggedIn ? req.session.user.name : null
+  next()
 })
 
 // ROUTES===========================================================
