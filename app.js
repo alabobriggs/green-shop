@@ -42,9 +42,6 @@ const store = new MongoDBStore({
   collection: 'sessions'
 });
 
-// set up csrf protection
-const csrfProtection = csrf()
-
 // initialize session store
 app.use(session({
   secret: 'my secret key',
@@ -53,7 +50,8 @@ app.use(session({
   store: store
 }))
 
-// initialize csrfProtectio  it most come after the session
+// set up csrf protection and initialize csrfProtectio  it most come after the session
+const csrfProtection = csrf()
 app.use(csrfProtection)
 
 // initialize flash - it most be done after session
