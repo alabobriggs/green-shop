@@ -66,20 +66,23 @@ exports.postEditProduct = (req, res, next) => {
   Product
     .findById(prodId)
     .then(product => {
+      if (product.userId.toString() !== req.user._id.toString()){
+        return res.redirect('/')
+      }
       product.title = updatedTitle
       product.price = updatedPrice
       product.imageUrl = updatedImageUrl
       product.description = updatedDesc
-      return product.save() // save is a mongoose method
+      return product.save().then(result => {
+        res.redirect('/admin/products');
+      }) // save is a mongoose method
     })
-    .then(result => {
-      res.redirect('/admin/products');
-    })
+   
     .catch(err => console.log(err));
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.find()
+  Product.find({userId : req.user._id, })
     // .select('title price -_id') used to control which fields are returned
     // .populate('userId', 'name email -cart') second argument pupulates which fields are needed
     .then(products => {
@@ -94,7 +97,10 @@ exports.getProducts = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-    Product.findByIdAndRemove(prodId)
+  Product.deleteOne({ 
+    _id: prodId.toString(), 
+    userId: req.user._id.toString() 
+  })
     .then(() => {
 
       res.redirect('/admin/products');
