@@ -1,6 +1,13 @@
-const User = require('../models/user');
 const bcrypt = require('bcryptjs')
-const nodemailer = 
+const nodemailer = require('nodemailer')
+const sendgridTransport = require('nodemailer-sendgrid-transport')
+const User = require('../models/user');
+
+const transporter = nodemailer.createTransport(sendgridTransport({
+  auth: {
+    api_key: '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'
+  }
+}))
 
 exports.getLogin = (req, res, next) => {
   let message = req.flash('error')
@@ -75,18 +82,26 @@ exports.postSignup = (req, res, next) => {
         return res.redirect('/signup')
       } 
       return bcrypt.hash(password, 12)
-              .then(hashedPassword => {
-                const user = new User({
-                  name: name,
-                  email: email,
-                  password: hashedPassword,
-                  cart: { items: [] }
-                })
-                return user.save()
-              })
-                .then(() => {
-                  res.redirect('/login')
-              })
+        .then(hashedPassword => {
+          const user = new User({
+            name: name,
+            email: email,
+            password: hashedPassword,
+            cart: { items: [] }
+          })
+          return user.save()
+        })
+        .then((result) => {
+          console.log(result)
+          res.redirect('/login')
+          return transporter.sendMail({
+            to: email,
+            from: 'products@node-project.com',
+            subject: 'Sign up succeeded',
+            html: '<h1>You succesfully signed up</h1>'
+          })
+        })
+        .catch(err => console.log(err))
     })
     .catch(err => {
       console.log(err)
