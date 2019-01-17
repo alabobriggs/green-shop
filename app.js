@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf')
+const flash = require('connect-flash')
 
 // import FILE MODULES===========================================
 const errorController = require('./controllers/error');
@@ -54,6 +55,9 @@ app.use(session({
 
 // initialize csrfProtectio  it most come after the session
 app.use(csrfProtection)
+
+// initialize flash - it most be done after session
+app.use(flash())
 
 // save user to request
 app.use((req, res, next) => {

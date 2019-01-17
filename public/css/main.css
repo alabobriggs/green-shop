@@ -225,6 +225,8 @@ form {
   color: white;
 }
 
+
+
 @media (min-width: 768px) {
   .main-header__nav {
     display: flex;
@@ -234,3 +236,4 @@ form {
     display: none;
   }
 }
+
