@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs')
+const nodemailer 
 
 exports.getLogin = (req, res, next) => {
   let message = req.flash('error')
@@ -37,15 +38,17 @@ exports.postLogin = (req, res, next) => {
     .then(user => {
       if(!user){
         req.flash('error', 'Email does not exist')
+        req.session.isLoggedIn = true;
         return res.redirect('/login')
       }
       bcrypt.compare(password, user.password)
         .then(doMatch => {
           if(doMatch){
-            req.session.isLoggedIn = true;
             req.session.user = user;
             return req.session.save(err => {
-              console.log(err);
+              if(err){
+                console.log(err)
+              }
               res.redirect('/');
             });
           }
@@ -92,7 +95,9 @@ exports.postSignup = (req, res, next) => {
 
 exports.postLogout = (req, res, next) => {
   req.session.destroy(err => {
-    console.log(err);
+    if (err) {
+      console.log(err)
+    }
     res.redirect('/');
   });
 };

@@ -8,9 +8,7 @@ exports.getProducts = (req, res, next) => {
       res.render('shop/product-list', {
         prods: products,
         pageTitle: 'All Products',
-        path: '/products',
-        isAuthenticated: req.session.isLoggedIn,
-        name: req.session.isLoggedIn? req.session.user.name : null
+        path: '/products'
       });
     })
     .catch(err => {
