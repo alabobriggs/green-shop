@@ -57,6 +57,7 @@ app.use(csrfProtection)
 // initialize flash - it most be done after session
 app.use(flash())
 
+
 // save user to request
 app.use((req, res, next) => {
   if(!req.session.user) {
@@ -64,26 +65,44 @@ app.use((req, res, next) => {
   }
   User.findById(req.session.user._id)
     .then(user => {
+      if(!user){
+        return next()
+      }
       req.user = user
       next()
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      next(new Error(err))
+    });
 })
 
-
 // pass global information to pages
-app.use((req, res, next)=> {
+app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn
   res.locals.csrfToken = req.csrfToken()
   res.locals.name = req.session.isLoggedIn ? req.session.user.name : null
   next()
-})
+}) 
+
+
 
 // ROUTES===========================================================
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
+app.get('/500',errorController.get500);
 app.use(errorController.get404);
+
+// ERROR HANDLER ===================================================
+app.use((error, req, res, next)=>{
+  // res.status(error.httpStatusCode).render(...)
+  res.status(500).render('500', {
+    pageTitle: 'Something went wrong!',
+    path: '/500',
+  });
+})
+
+
 
 // connect to DATABASE ==============================================
 mongoose
