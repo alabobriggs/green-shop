@@ -7,6 +7,8 @@ const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf')
 const flash = require('connect-flash')
+const multer = require('multer')
+const uniqid = require('uniqid')
 
 // import FILE MODULES===========================================
 const errorController = require('./controllers/error');
@@ -33,6 +35,7 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 
+
 // static files
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -41,6 +44,18 @@ const store = new MongoDBStore({
   uri: MONGODB_URI,
   collection: 'sessions'
 });
+
+// file storage config
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'images',)
+  },
+  filename: (req, file, cb) => {
+      cb(null, uniqid()+ '-' +  file.originalname)
+  }
+})
+// initialize multer
+app.use(multer({storage: fileStorage}).single('image'))
 
 // initialize session store
 app.use(session({
@@ -84,8 +99,6 @@ app.use((req, res, next) => {
   next()
 }) 
 
-
-
 // ROUTES===========================================================
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
@@ -101,8 +114,6 @@ app.use((error, req, res, next)=>{
     path: '/500',
   });
 })
-
-
 
 // connect to DATABASE ==============================================
 mongoose
