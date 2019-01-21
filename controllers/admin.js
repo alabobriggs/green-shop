@@ -1,5 +1,5 @@
 const Product = require('../models/product');
-
+const fileHelper = require('../util/file')
 
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
@@ -14,7 +14,6 @@ exports.postAddProduct = (req, res, next) => {
   const image = req.file;
   const price = req.body.price;
   const description = req.body.description;
-  console.log(image)
   if(!image){
     return res.status(422).render('admin/edit-product', {
       pageTitle: 'Add Product',
@@ -85,6 +84,7 @@ exports.postEditProduct = (req, res, next) => {
       product.title = updatedTitle
       product.price = updatedPrice
       if(image){
+        fileHelper.deleteFile(product.imageUrl.split('/')[1])
         product.imageUrl = `/${image.path}`
       }
       product.description = updatedDesc
@@ -119,12 +119,18 @@ exports.getProducts = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.deleteOne({ 
-    _id: prodId.toString(), 
-    userId: req.user._id.toString() 
-  })
+  Product.findById(prodId)
+    .then(product => {
+      if(!product){
+        return next(new Error('Product not found'))
+      }
+      fileHelper.deleteFile(product.imageUrl.split('/')[1])
+      return Product.deleteOne({
+        _id: prodId.toString(),
+        userId: req.user._id.toString()
+      })
+    })
     .then(() => {
-
       res.redirect('/admin/products');
     })
     .catch(err => {
