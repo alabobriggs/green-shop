@@ -38,12 +38,24 @@ app.use(bodyParser.urlencoded({
 
 // static files
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/images',express.static(path.join(__dirname, 'images')));
 
 // set up session store
 const store = new MongoDBStore({
   uri: MONGODB_URI,
   collection: 'sessions'
 });
+
+// multer file - filter
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === 'image/png' || 
+      file.mimetype === 'image/jpg' || 
+      file.mimetype === 'image/jpeg') {
+        cb(null,true)
+  } else {
+    cb(null, false) // this means multer should not accept the file
+  }
+}
 
 // file storage config
 const fileStorage = multer.diskStorage({
@@ -55,7 +67,7 @@ const fileStorage = multer.diskStorage({
   }
 })
 // initialize multer
-app.use(multer({storage: fileStorage}).single('image'))
+app.use(multer({storage: fileStorage, fileFilter:fileFilter}).single('image'))
 
 // initialize session store
 app.use(session({
