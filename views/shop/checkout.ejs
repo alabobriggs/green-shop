@@ -14,5 +14,17 @@
             <div class='centered'>
                 <h2>Total: <%= totalSum %></h2>
             </div>
+            <div class='centered'>
+                <form action="/create-order" method="POST">
+                    <script
+                      src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                      data-key="pk_test_HVO3l0uG6rtAI30cuCgwmDLj"
+                      data-amount="<%= totalSum * 100 %>"
+                      data-name="Your Order"
+                      data-description="Ordered Items"
+                      data-locale="usd">
+                    </script>
+                </form>
+            </div>
         </main>
 <%- include('../includes/end.ejs') %>

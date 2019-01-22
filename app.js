@@ -9,6 +9,9 @@ const csrf = require('csurf')
 const flash = require('connect-flash')
 const multer = require('multer')
 const uniqid = require('uniqid')
+const shopController = require('./controllers/shop');
+const isAuth = require('./middleware/is-auth')
+
 
 // import FILE MODULES===========================================
 const errorController = require('./controllers/error');
@@ -77,13 +80,11 @@ app.use(session({
   store: store
 }))
 
-// set up csrf protection and initialize csrfProtectio  it most come after the session
 const csrfProtection = csrf()
-app.use(csrfProtection)
 
 // initialize flash - it most be done after session
 app.use(flash())
-
+app.use(csrfProtection)
 
 // save user to request
 app.use((req, res, next) => {
@@ -106,12 +107,21 @@ app.use((req, res, next) => {
 // pass global information to pages
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn
-  res.locals.csrfToken = req.csrfToken()
   res.locals.name = req.session.isLoggedIn ? req.session.user.name : null
   next()
 }) 
 
 // ROUTES===========================================================
+app.post('/create-order', isAuth, shopController.postOrder);
+
+// set up csrf protection and initialize csrfProtectio  it most come after the session
+app.use(csrfProtection)
+
+app.use((req, res, next) => {
+  res.locals.csrfToken = req.csrfToken()
+  next()
+}) 
+
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
@@ -121,6 +131,7 @@ app.use(errorController.get404);
 // ERROR HANDLER ===================================================
 app.use((error, req, res, next)=>{
   // res.status(error.httpStatusCode).render(...)
+  // console.log(error)
   res.status(500).render('500', {
     pageTitle: 'Something went wrong!',
     path: '/500',
