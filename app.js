@@ -44,8 +44,8 @@ app.use(helmet())
 app.use(compression())
 
 // setup https
-const privateKey = fs.readFileSync('server.key')
-const certificate = fs.readFileSync('-server.cert')
+// const privateKey = fs.readFileSync('server.key')
+// const certificate = fs.readFileSync('-server.cert')
 
 // morgan file logger 
 const accessLogStream = fs.createWriteStream(

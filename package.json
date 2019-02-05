@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
+  "engines": {
+    "node": "v10.13.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js",
+    "start": "NODE_ENV=production MONGODB_URI=mongodb+srv://magnus:WADM4URjzM445uyV@cluster0-k1h68.mongodb.net/shop SENDGRID_KEY=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 STRIPE_KEY=sk_test_HNGBvtuSko9Hk9Ou4I46G3qe node app.js",
     "start-server": "node app.js",
     "start:dev": "nodemon app.js"
   },
