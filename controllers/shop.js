@@ -3,7 +3,7 @@ const Order = require('../models/order');
 const fs = require('fs')
 const path = require('path')
 const PDFdocument = require('pdfkit')
-const stripe = require("stripe")("sk_test_HNGBvtuSko9Hk9Ou4I46G3qe");
+const stripe = require("stripe")(process.env.STRIPE_KEY);
 
 
 exports.getProducts = (req, res, next) => {

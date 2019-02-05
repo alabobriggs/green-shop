@@ -11,7 +11,11 @@ const multer = require('multer')
 const uniqid = require('uniqid')
 const shopController = require('./controllers/shop');
 const isAuth = require('./middleware/is-auth')
-
+const helmet = require('helmet')
+const compression = require('compression')
+const morgan = require('morgan')
+const fs = require('fs')
+const https = require('https')
 
 // import FILE MODULES===========================================
 const errorController = require('./controllers/error');
@@ -24,10 +28,33 @@ const authRoutes = require('./routes/auth');
 
 
 // app SETUP=========================================================
-const MONGODB_URI = "mongodb://localhost:27017/nodecomplete"
+const MONGODB_URI = process.env.MONGODB_URI
+// console.log(process.env.MONGODB_URI)
+// console.log(process.env.SENDGRID_KEY)
+// console.log(process.env.STRIPE_KEY)
+// console.log(process.env.NODE_ENV) 
 
 // express
 const app = express();
+
+// secure headers 
+app.use(helmet())
+
+// file compression
+app.use(compression())
+
+// setup https
+const privateKey = fs.readFileSync('server.key')
+const certificate = fs.readFileSync('-server.cert')
+
+// morgan file logger 
+const accessLogStream = fs.createWriteStream(
+      path.join(__dirname,'access.log'), 
+      {
+        flags: 'a'
+      }
+    )
+app.use(morgan('combined', {stream: accessLogStream}))
 
 // set VIEW ENGINE
 app.set('view engine', 'ejs');
@@ -69,6 +96,7 @@ const fileStorage = multer.diskStorage({
       cb(null, uniqid()+ '-' +  file.originalname)
   }
 })
+
 // initialize multer
 app.use(multer({storage: fileStorage, fileFilter:fileFilter}).single('image'))
 
@@ -85,7 +113,6 @@ const csrfProtection = csrf()
 // initialize flash - it most be done after session
 app.use(flash())
 app.use(csrfProtection)
-
 // save user to request
 app.use((req, res, next) => {
   if(!req.session.user) {
@@ -144,6 +171,13 @@ mongoose
     useNewUrlParser: true
   })
   .then(() => {
-    app.listen(3000, () => console.log('server started at port 3000'));
+      // https
+      // .createServer(
+      //   { key: privateKey, cert: certificate}, app
+      // )
+      app.listen(
+        process.env.PORT || 3000, 
+        () => console.log('server started at port 3000')
+      );
   })
   .catch(err => console.log(err))
